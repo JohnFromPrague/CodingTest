@@ -29,12 +29,12 @@ namespace CleaningRobot.Services
             var cleaningSession = new CleaningSession { Position = settings.Position, Battery = settings.Battery };
             this.logger.LogInformation($"Starting position {cleaningSession.Position} with {cleaningSession.Battery} battery");
 
-            var commands = new Queue<RobotCommand>(settings.Commands.Select(c => c.AsRobotCommand()));
+            var commands = new Queue<Command>(settings.Commands);
 
             while (commands.TryDequeue(out var command))
             {
                 this.logger.LogInformation($"Processing command: {command}");
-                var result = this.commandProcessor.Process(settings.Map, cleaningSession, command);
+                var result = this.commandProcessor.Process(settings.Map, cleaningSession, command.AsRobotCommand());
                 this.logger.LogInformation($"Result: {result}, position: {cleaningSession.Position}, battery: {cleaningSession.Battery}");
 
                 if (result == CommandResult.Obstacle)
