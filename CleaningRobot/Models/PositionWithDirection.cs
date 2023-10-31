@@ -5,6 +5,6 @@ namespace CleaningRobot.Models
     internal record PositionWithDirection : Position
     {
         [JsonPropertyName("facing")]
-        public Direction Direction { get; set; }
+        public Direction Facing { get; set; }
     }
 }

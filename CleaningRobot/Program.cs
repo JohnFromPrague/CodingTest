@@ -55,9 +55,9 @@ public class Program
                 return 1;
             }
 
-            if (settings.Map.ContainsObstacle(settings.Position.X, settings.Position.Y))
+            if (settings.Map.ContainsObstacle(settings.Start.X, settings.Start.Y))
             {
-                logger.LogError(string.Format(LogMessages.InvalidStartingPoint, settings.Position));
+                logger.LogError(string.Format(LogMessages.InvalidStartingPoint, settings.Start));
                 return 1;
             }
 

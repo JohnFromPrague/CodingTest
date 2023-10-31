@@ -26,7 +26,7 @@ namespace CleaningRobot.Tests
                     {
                         new List<MapCell?> { MapCell.S }
                     },
-                    Position = new PositionWithDirection { X = 0, Y = 0 },
+                    Start = new PositionWithDirection { X = 0, Y = 0 },
                     Commands = new List<Command> { Command.A }
                 });
 

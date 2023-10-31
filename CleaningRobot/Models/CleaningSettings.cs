@@ -13,7 +13,7 @@ namespace CleaningRobot.Models
         public required List<List<MapCell?>> Map { get; set; }
 
         [JsonPropertyName("start")]
-        public required PositionWithDirection Position { get; set; }
+        public required PositionWithDirection Start { get; set; }
 
         [JsonPropertyName("commands")]
         public required IEnumerable<Command> Commands { get; set; }

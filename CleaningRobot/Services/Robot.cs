@@ -24,9 +24,12 @@ namespace CleaningRobot.Services
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// Runs robot with provided cleaning settings.
+        /// </summary>
         public CleaningSession Run(CleaningSettings settings)
         {
-            var cleaningSession = new CleaningSession { Position = settings.Position, Battery = settings.Battery };
+            var cleaningSession = new CleaningSession { Position = settings.Start, Battery = settings.Battery };
             this.logger.LogInformation($"Starting position {cleaningSession.Position} with {cleaningSession.Battery} battery");
 
             var commands = new Queue<Command>(settings.Commands);

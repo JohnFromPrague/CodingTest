@@ -16,11 +16,11 @@ namespace CleaningRobot.Services
 
             if (command is RotationCommand rotationCommand)
             {
-                session.Position.Direction = rotationCommand.GetDirection(session.Position.Direction);
+                session.Position.Facing = rotationCommand.GetDirection(session.Position.Facing);
             }
             else if (command is MovementCommand movementCommand)
             {
-                var path = movementCommand.GetStep(session.Position.Direction);
+                var path = movementCommand.GetStep(session.Position.Facing);
                 var nextX = session.Position.X + path.X;
                 var nextY = session.Position.Y + path.Y;
 

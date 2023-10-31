@@ -214,7 +214,7 @@ namespace CleaningRobot.Tests
                     {
                         new List<MapCell?> { MapCell.S }
                     },
-                Position = new PositionWithDirection { X = x, Y = y },
+                Start = new PositionWithDirection { X = x, Y = y },
                 Commands = new List<Command> { Command.A }
             });
 
