@@ -4,7 +4,7 @@ How to build & run it:
 1) To build solution go into root and run "dotnet build" or build it via Visual Studio
 2) To run application go from root folder into CleaningRobot subfolder and run "dotnet run <source.json> <result.json>"
    
-   <img width="857" alt="image" src="https://github.com/JohnFromPrague/CodingTest/assets/18370349/98d34a0f-d447-46b3-9d14-503f8923b564">
+   <img width="857" alt="image" src="https://github.com/JohnFromPrague/CodingTest/assets/18370349/588b0379-48bc-456a-a26c-fa84417ae067">
 
 
 Remarks:
