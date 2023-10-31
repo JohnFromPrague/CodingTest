@@ -1,11 +1,5 @@
-﻿using Castle.Core.Logging;
-
-using CleaningRobot.Model;
-using CleaningRobot.Services;
-
-using Microsoft.Extensions.Logging;
-
-using Moq;
+﻿using CleaningRobot.Models;
+using CleaningRobot.Models.Commands;
 
 namespace CleaningRobot.Tests
 {
@@ -22,22 +16,22 @@ namespace CleaningRobot.Tests
         [InlineData(Direction.W, Command.TR, Direction.N)]
         public void DirectionTest(Direction direction, Command command, Direction expectedDirection)
         {
-            var actualDirection = CommandProcessor.GetNewDirection(direction, command);
+            var actualDirection = ((RotationCommand)command.AsRobotCommand()).GetDirection(direction);
             Assert.Equal(expectedDirection, actualDirection);
         }
 
         [Theory]
-        [InlineData(Direction.N, true, 0, -1)]
-        [InlineData(Direction.E, true, 1, 0)]
-        [InlineData(Direction.S, true, 0, 1)]
-        [InlineData(Direction.W, true, -1, 0)]
-        [InlineData(Direction.N, false, 0, 1)]
-        [InlineData(Direction.E, false, -1, 0)]
-        [InlineData(Direction.S, false, 0, -1)]
-        [InlineData(Direction.W, false, 1, 0)]
-        public void StepTest(Direction direction, bool advance, int expectedX, int expectedY)
+        [InlineData(Direction.N, Command.A, 0, -1)]
+        [InlineData(Direction.E, Command.A, 1, 0)]
+        [InlineData(Direction.S, Command.A, 0, 1)]
+        [InlineData(Direction.W, Command.A, -1, 0)]
+        [InlineData(Direction.N, Command.B, 0, 1)]
+        [InlineData(Direction.E, Command.B, -1, 0)]
+        [InlineData(Direction.S, Command.B, 0, -1)]
+        [InlineData(Direction.W, Command.B, 1, 0)]
+        public void StepTest(Direction direction, Command command, int expectedX, int expectedY)
         {
-            var nextStep = CommandProcessor.GetNextStep(direction, advance);
+            var nextStep = ((MovementCommand)command.AsRobotCommand()).GetStep(direction);
             Assert.Equal(expectedX, nextStep.X);
             Assert.Equal(expectedY, nextStep.Y);
         }

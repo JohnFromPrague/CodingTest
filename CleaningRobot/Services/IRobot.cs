@@ -1,11 +1,9 @@
-﻿using CleaningRobot.Model;
+﻿using CleaningRobot.Models;
 
 namespace CleaningRobot.Services
 {
     internal interface IRobot
     {
-        bool Validate(CleaningSettings settings);
-
         CleaningSession Run(CleaningSettings settings);
     }
 }

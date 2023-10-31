@@ -1,11 +1,9 @@
-﻿using CleaningRobot.Models;
-
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 [assembly: InternalsVisibleTo("CleaningRobot.Tests")]
 
-namespace CleaningRobot.Model
+namespace CleaningRobot.Models
 {
     internal record CleaningSession
     {

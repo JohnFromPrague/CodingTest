@@ -12,12 +12,12 @@ namespace CleaningRobot.Models
 
         public int CompareTo(Position? other)
         {
-            if (other == null || this.X > other.X)
+            if (other == null || X > other.X)
             {
                 return 1;
             }
 
-            if (this.X < other.X || this.Y < other.Y)
+            if (X < other.X || Y < other.Y)
             {
                 return -1;
             }

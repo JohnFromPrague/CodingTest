@@ -1,7 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using CleaningRobot.Models.Commands;
+
 using System.Text.Json.Serialization;
 
-namespace CleaningRobot.Model
+namespace CleaningRobot.Models
 {
     internal record CleaningSettings
     {

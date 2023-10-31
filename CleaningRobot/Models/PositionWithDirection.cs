@@ -1,8 +1,6 @@
-﻿using CleaningRobot.Models;
+﻿using System.Text.Json.Serialization;
 
-using System.Text.Json.Serialization;
-
-namespace CleaningRobot.Model
+namespace CleaningRobot.Models
 {
     internal record PositionWithDirection : Position
     {

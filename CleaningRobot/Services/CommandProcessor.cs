@@ -1,34 +1,30 @@
-﻿using CleaningRobot.Model;
-using CleaningRobot.Models;
-
-using System.Drawing;
+﻿using CleaningRobot.Models;
+using CleaningRobot.Models.Commands;
 
 namespace CleaningRobot.Services
 {
     internal class CommandProcessor : ICommandProcessor
     {
-        public CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, Command command)
+        public CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, RobotCommand command)
         {
-            var batteryConsuption = GetBatteryConsuption(command);
-            if (session.Battery - batteryConsuption < 0)
+            if (session.Battery - command.BatteryConsuption < 0)
             {
                 return CommandResult.LowBattery;
             }
 
-            session.Battery -= batteryConsuption;
+            session.Battery -= command.BatteryConsuption;
 
-            if (command == Command.TL || command == Command.TR)
+            if (command is RotationCommand rotationCommand)
             {
-                session.Position.Direction = GetNewDirection(session.Position.Direction, command);
+                session.Position.Direction = rotationCommand.GetDirection(session.Position.Direction);
             }
-
-            if (command == Command.A || command == Command.B)
+            else if (command is MovementCommand movementCommand)
             {
-                var nextStep = GetNextStep(session.Position.Direction, command == Command.A);
-                var nextX = session.Position.X + nextStep.X;
-                var nextY = session.Position.Y + nextStep.Y;
+                var path = movementCommand.GetStep(session.Position.Direction);
+                var nextX = session.Position.X + path.X;
+                var nextY = session.Position.Y + path.Y;
 
-                if (IsObstacle(map, nextX, nextY))
+                if (map.ContainsObstacle(nextX, nextY))
                 {
                     return CommandResult.Obstacle;
                 }
@@ -36,8 +32,7 @@ namespace CleaningRobot.Services
                 session.Position.X = nextX;
                 session.Position.Y = nextY;
             }
-
-            if (command == Command.C)
+            else if (command is CleanCommand)
             {
                 session.Cleaned.Add(new Position { X = session.Position.X, Y = session.Position.Y });
             }
@@ -46,62 +41,5 @@ namespace CleaningRobot.Services
 
             return CommandResult.Success;
         }
-
-        public bool IsObstacle(IReadOnlyList<IReadOnlyList<MapCell?>> map, int x, int y)
-        {
-            return x < 0 || y < 0 || y >= map.Count || x >= map[y].Count || map[y][x] != MapCell.S;
-        }
-
-        internal static Direction GetNewDirection(Direction currentDirection, Command command)
-        {
-            var directionChange = command switch
-            {
-                Command.TL => -1,
-                Command.TR => 1,
-                _ => throw new InvalidOperationException($"Command {command} is not supported")
-            };
-
-            var newDirection = currentDirection + directionChange;
-            if (!Enum.IsDefined(newDirection))
-            {
-                // Do not hardcode here W/N and use Max/Min instead.
-                newDirection = directionChange < 0 ? Enum.GetValues<Direction>().Max() : Enum.GetValues<Direction>().Min();
-            }
-
-            return newDirection;
-        }
-
-        internal static Point GetNextStep(Direction direction, bool advance)
-        {
-            return direction switch
-            {
-                Direction.N => new Point(0, advance ? -1 : 1),
-                Direction.E => new Point(advance ? 1 : -1, 0),
-                Direction.S => new Point(0, advance ? 1 : -1),
-                Direction.W => new Point(advance ? -1 : 1, 0),
-                _ => throw new InvalidOperationException($"Direction {direction} is not supported")
-            };
-        }
-
-        private static int GetBatteryConsuption(Command command)
-        {
-            return command switch
-            {
-                Command.TL => 1,
-                Command.TR => 1,
-                Command.A => 2,
-                Command.B => 3,
-                Command.C => 5,
-                _ => throw new InvalidOperationException($"Command {command} is not supported")
-            };
-        }
-
-    }
-
-    public enum CommandResult
-    {
-        Success,
-        LowBattery,
-        Obstacle
     }
 }

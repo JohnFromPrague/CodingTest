@@ -1,4 +1,6 @@
-﻿using CleaningRobot.Json;
+﻿using CleaningRobot;
+using CleaningRobot.Json;
+using CleaningRobot.Models;
 using CleaningRobot.Services;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,32 +11,60 @@ using System.Text.Json.Serialization;
 
 public class Program
 {
-    static void Main(string[] args) => Run(args, ConfigureServices().BuildServiceProvider());
+    static int Main(string[] args) => Run(args, ConfigureServices().BuildServiceProvider());
 
-    internal static void Run(string[] args, IServiceProvider serviceProvider)
+    internal static int Run(string[] args, IServiceProvider serviceProvider)
     {
         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
         try
         {
             var fileService = serviceProvider.GetRequiredService<IFileService>();
-            var filePaths = fileService.TryGetFilePaths(args);
-            if (!filePaths.HasValue)
+            var robot = serviceProvider.GetRequiredService<IRobot>();
+
+            if (args == null || args.Length != 2)
             {
-                return;
+                logger.LogError(LogMessages.TwoParametersRequired);
+                return 1;
             }
 
-            var settings = fileService.Read(filePaths.Value.SourceFilePath);
-
-            var robot = serviceProvider.GetRequiredService<IRobot>();
-            if (!robot.Validate(settings))
+            var sourceFilePath = args[0];
+            if (!File.Exists(sourceFilePath))
             {
-                return;
+                logger.LogError(string.Format(LogMessages.SourceFileNotFound, sourceFilePath));
+                return 1;
+            }
+
+            var resultFilePath = args[1];
+            if (string.IsNullOrWhiteSpace(resultFilePath))
+            {
+                logger.LogError(LogMessages.EmptyResultFilePath);
+                return 1;
+            }
+
+            if (!Path.HasExtension(resultFilePath))
+            {
+                logger.LogError(string.Format(LogMessages.InvalidResultFilePath, resultFilePath));
+                return 1;
+            }
+
+            var settings = fileService.Read(sourceFilePath);
+            if (settings.Battery <= 0)
+            {
+                logger.LogError(LogMessages.OutOfBattery);
+                return 1;
+            }
+
+            if (settings.Map.ContainsObstacle(settings.Position.X, settings.Position.Y))
+            {
+                logger.LogError(string.Format(LogMessages.InvalidStartingPoint, settings.Position));
+                return 1;
             }
 
             var result = robot.Run(settings);
+            fileService.Write(resultFilePath, result);
 
-            fileService.Write(filePaths.Value.ResultFilePath, result);
+            return 0;
         }
         catch (Exception e)
         {

@@ -1,11 +1,10 @@
-﻿using CleaningRobot.Model;
+﻿using CleaningRobot.Models;
+using CleaningRobot.Models.Commands;
 
 namespace CleaningRobot.Services
 {
     internal interface ICommandProcessor
     {
-        bool IsObstacle(IReadOnlyList<IReadOnlyList<MapCell?>> map, int x, int y);
-
-        CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, Command command);
+        CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, RobotCommand command);
     }
 }

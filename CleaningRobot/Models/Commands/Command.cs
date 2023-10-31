@@ -1,4 +1,4 @@
-﻿namespace CleaningRobot.Model
+﻿namespace CleaningRobot.Models.Commands
 {
     public enum Command
     {
