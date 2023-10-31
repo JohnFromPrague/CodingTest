@@ -5,7 +5,7 @@ namespace CleaningRobot.Services
 {
     internal class CommandProcessor : ICommandProcessor
     {
-        public CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, RobotCommand command)
+        public CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, CommandBase command)
         {
             if (session.Battery - command.BatteryConsuption < 0)
             {

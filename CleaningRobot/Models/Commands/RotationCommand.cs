@@ -1,18 +1,28 @@
 ﻿namespace CleaningRobot.Models.Commands
 {
-    internal class RotationCommand : RobotCommand
+    internal class RotationCommand : CommandBase
     {
-        public required bool Left { get; init; }
+        /// <summary>
+        /// Change of direction within <see cref="Direction"/> enum, where -1 means turn to left and +1 means turn to right.
+        /// </summary>
+        public required int DirectionChange { get; init; }
 
         public Direction GetDirection(Direction currentDirection)
         {
-            var directionChange = Left ? -1 : 1;
+            var newDirection = currentDirection + DirectionChange;
 
-            var newDirection = currentDirection + directionChange;
             if (!Enum.IsDefined(newDirection))
             {
-                // Do not hardcode here W/N and use Max/Min instead.
-                newDirection = directionChange < 0 ? Enum.GetValues<Direction>().Max() : Enum.GetValues<Direction>().Min();
+                var min = Enum.GetValues<Direction>().Min();
+                var max = Enum.GetValues<Direction>().Max();
+
+                do
+                {
+                    newDirection = DirectionChange < 0 ?
+                        (int)max + newDirection + 1 :
+                        (int)newDirection - max - 1;
+                }
+                while (!Enum.IsDefined(newDirection));
             }
 
             return newDirection;

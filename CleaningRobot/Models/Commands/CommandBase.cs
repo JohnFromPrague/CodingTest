@@ -1,6 +1,6 @@
 ﻿namespace CleaningRobot.Models.Commands
 {
-    internal abstract class RobotCommand
+    internal abstract class CommandBase
     {
         public required int BatteryConsuption { get; init; }
     }

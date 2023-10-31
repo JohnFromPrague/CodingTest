@@ -5,6 +5,6 @@ namespace CleaningRobot.Services
 {
     internal interface ICommandProcessor
     {
-        CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, RobotCommand command);
+        CommandResult Process(IReadOnlyList<IReadOnlyList<MapCell?>> map, CleaningSession session, CommandBase command);
     }
 }

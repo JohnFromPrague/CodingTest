@@ -3,13 +3,13 @@
     internal static class CommandExtensions
     {
         // No need to create multiple instances of commands.
-        private static RobotCommand turnLeft = new RotationCommand { BatteryConsuption = 1, Left = true };
-        private static RobotCommand turnRight = new RotationCommand { BatteryConsuption = 1, Left = false };
-        private static RobotCommand advance = new MovementCommand { BatteryConsuption = 2, Advance = true };
-        private static RobotCommand back = new MovementCommand { BatteryConsuption = 3, Advance = false };
-        private static RobotCommand clean = new CleanCommand { BatteryConsuption = 5 };
+        private static CommandBase turnLeft = new RotationCommand { BatteryConsuption = 1, DirectionChange = -1 };
+        private static CommandBase turnRight = new RotationCommand { BatteryConsuption = 1, DirectionChange = 1 };
+        private static CommandBase advance = new MovementCommand { BatteryConsuption = 2, DistanceChange = 1 };
+        private static CommandBase back = new MovementCommand { BatteryConsuption = 3, DistanceChange = -1 };
+        private static CommandBase clean = new CleanCommand { BatteryConsuption = 5 };
 
-        internal static RobotCommand AsRobotCommand(this Command command)
+        internal static CommandBase AsRobotCommand(this Command command)
         {
             return command switch
             {
