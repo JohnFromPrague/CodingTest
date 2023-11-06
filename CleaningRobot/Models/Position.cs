@@ -2,7 +2,7 @@
 
 namespace CleaningRobot.Models
 {
-    internal record class Position : IComparable<Position>
+    internal record class Position : IComparable<Position>  
     {
         [JsonPropertyName("X")]
         public required int X { get; set; }

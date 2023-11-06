@@ -1,6 +1,7 @@
 ﻿using CleaningRobot.Models;
 using CleaningRobot.Models.Commands;
 using CleaningRobot.Services;
+using CleaningRobot.Services.Strategy;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,16 +9,16 @@ using Moq;
 
 namespace CleaningRobot.Tests
 {
-    public class RobotTests
+    public class CommandCleaningStrategyTests
     {
         [Theory]
         [InlineData(5)]
         [InlineData(10000)]
         public void RobotStuck(int battery)
         {
-            var logger = new Mock<ILogger<Robot>>();
+            var logger = new Mock<ILogger<CommandCleaningStrategy>>();
 
-            var commandProcessor = new Robot(new CommandProcessor(), logger.Object);
+            var commandProcessor = new CommandCleaningStrategy(new CommandProcessor(), logger.Object);
             commandProcessor.Run(
                 new CleaningSettings
                 {

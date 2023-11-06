@@ -2,6 +2,7 @@
 using CleaningRobot.Json;
 using CleaningRobot.Models;
 using CleaningRobot.Services;
+using CleaningRobot.Services.Strategy;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +21,6 @@ public class Program
         try
         {
             var fileService = serviceProvider.GetRequiredService<IFileService>();
-            var robot = serviceProvider.GetRequiredService<IRobot>();
 
             if (args == null || args.Length != 2)
             {
@@ -61,7 +61,7 @@ public class Program
                 return 1;
             }
 
-            var result = robot.Run(settings);
+            var result = ActivatorUtilities.CreateInstance<CommandCleaningStrategy>(serviceProvider).Run(settings);
             fileService.Write(resultFilePath, result);
 
             return 0;
@@ -77,7 +77,6 @@ public class Program
     {
         var collection = new ServiceCollection();
         collection.AddTransient<IFileService, FileService>();
-        collection.AddTransient<IRobot, Robot>();
         collection.AddTransient<ICommandProcessor, CommandProcessor>();
 
         collection.AddSingleton(new JsonSerializerOptions

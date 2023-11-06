@@ -11,13 +11,13 @@ namespace CleaningRobot.Models
         /// All cells visited.
         /// </summary>
         [JsonPropertyName("visited")]
-        public SortedSet<Position> Visited { get; set; } = new SortedSet<Position>();
+        public HashSet<Position> Visited { get; set; } = new HashSet<Position>();
 
         /// <summary>
         /// All cells cleaned.
         /// </summary>
         [JsonPropertyName("cleaned")]
-        public SortedSet<Position> Cleaned { get; set; } = new SortedSet<Position>();
+        public HashSet<Position> Cleaned { get; set; } = new HashSet<Position>();
 
         /// <summary>
         /// Final position of the robot.

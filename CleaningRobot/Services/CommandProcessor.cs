@@ -1,6 +1,8 @@
 ﻿using CleaningRobot.Models;
 using CleaningRobot.Models.Commands;
 
+using System.Diagnostics;
+
 namespace CleaningRobot.Services
 {
     internal class CommandProcessor : ICommandProcessor
@@ -20,17 +22,17 @@ namespace CleaningRobot.Services
             }
             else if (command is MovementCommand movementCommand)
             {
-                var path = movementCommand.GetStep(session.Position.Facing);
-                var nextX = session.Position.X + path.X;
-                var nextY = session.Position.Y + path.Y;
+                var nextPosition = movementCommand.GetNextPosition(session.Position, session.Position.Facing);
 
-                if (map.ContainsObstacle(nextX, nextY))
+                if (map.ContainsObstacle(nextPosition.X, nextPosition.Y))
                 {
                     return CommandResult.Obstacle;
                 }
 
-                session.Position.X = nextX;
-                session.Position.Y = nextY;
+                Trace.WriteLine(session.Position);
+
+                session.Position.X = nextPosition.X;
+                session.Position.Y = nextPosition.Y;
             }
             else if (command is CleanCommand)
             {

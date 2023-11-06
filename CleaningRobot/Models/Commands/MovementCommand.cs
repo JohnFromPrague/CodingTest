@@ -18,5 +18,11 @@
                 _ => throw new InvalidOperationException($"Direction {direction} is not supported")
             };
         }
+
+        public Position GetNextPosition(Position current, Direction direction)
+        {
+            var path = GetStep(direction);
+            return new Position { X = current.X + path.X, Y = current.Y + path.Y };
+        }
     }
 }
