@@ -79,6 +79,7 @@ namespace CleaningRobot.Services.Strategy
         }
 
         private static bool IsNextPositionUnvisited(CleaningSession session, MovementCommand advanceCommand)
+            // TODO: This does not work if Visited is SortedSet instead of HashSet
             => !session.Visited.Contains(advanceCommand.GetNextPosition(session.Position, session.Position.Facing));
 
         private CommandResult ProcessObstacle(BacktrackingCleaningSettings settings, CleaningSession session, Stack<Command> reverseCommands, MovementCommand advanceCommand)
