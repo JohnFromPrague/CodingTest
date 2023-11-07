@@ -1,6 +1,4 @@
-﻿using CleaningRobot.Models;
-
-namespace CleaningRobot.Services.Strategy
+﻿namespace CleaningRobot.Models
 {
     internal interface ICleaningSettings
     {

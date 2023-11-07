@@ -20,7 +20,7 @@ namespace CleaningRobot.Tests
 
             var commandProcessor = new CommandCleaningStrategy(new CommandProcessor(), logger.Object);
             commandProcessor.Run(
-                new CleaningSettings
+                new CommandCleaningSettings
                 {
                     Battery = battery,
                     Map = new List<List<MapCell?>>

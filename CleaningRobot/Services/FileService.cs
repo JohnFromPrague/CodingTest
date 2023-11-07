@@ -16,10 +16,10 @@ namespace CleaningRobot.Services
             this.jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
         } 
 
-        public CleaningSettings Read(string sourceFilePath)
+        public CommandCleaningSettings Read(string sourceFilePath)
         {
             using var sourceFileStream = File.OpenRead(sourceFilePath);
-            var cleaningArgs = JsonSerializer.Deserialize<CleaningSettings>(sourceFileStream, this.jsonSerializerOptions);
+            var cleaningArgs = JsonSerializer.Deserialize<CommandCleaningSettings>(sourceFileStream, this.jsonSerializerOptions);
             if (cleaningArgs == null)
             {
                 throw new InvalidOperationException("Failed to deserialize source file.");

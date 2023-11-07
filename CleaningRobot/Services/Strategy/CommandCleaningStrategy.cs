@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CleaningRobot.Services.Strategy
 {
-    internal class CommandCleaningStrategy : ICleaningStrategy<CleaningSettings>
+    internal class CommandCleaningStrategy : ICleaningStrategy<CommandCleaningSettings>
     {
         private readonly IEnumerable<IEnumerable<Command>> backOffStrategy = new[]
         {
@@ -25,7 +25,7 @@ namespace CleaningRobot.Services.Strategy
             this.commandProcessor = commandProcessor ?? throw new ArgumentNullException(nameof(commandProcessor));
         }
 
-        public CleaningSession Run(CleaningSettings settings)
+        public CleaningSession Run(CommandCleaningSettings settings)
         {
             var cleaningSession = new CleaningSession { Position = settings.Start, Battery = settings.Battery };
             this.logger.LogInformation($"Starting position {cleaningSession.Position} with {cleaningSession.Battery} battery");

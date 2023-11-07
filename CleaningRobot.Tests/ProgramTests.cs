@@ -207,7 +207,7 @@ namespace CleaningRobot.Tests
             services.RemoveAll<IFileService>();
 
             var fileService = new Mock<IFileService>();
-            fileService.Setup(f => f.Read(It.IsAny<string>())).Returns(new CleaningSettings
+            fileService.Setup(f => f.Read(It.IsAny<string>())).Returns(new CommandCleaningSettings
             {
                 Battery = battery,
                 Map = new List<List<MapCell?>>

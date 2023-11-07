@@ -1,11 +1,10 @@
 ﻿using CleaningRobot.Models.Commands;
-using CleaningRobot.Services.Strategy;
 
 using System.Text.Json.Serialization;
 
 namespace CleaningRobot.Models
 {
-    internal record CleaningSettings : ICleaningSettings
+    internal record CommandCleaningSettings : ICleaningSettings
     {
         /// <summary>
         /// Map with cells which are cleanable, not cleanable or walls in case of null.

@@ -21,6 +21,7 @@ namespace CleaningRobot.Services.Strategy
 
             while (!session.Cleaned.SequenceEqual(cleanable))
             {
+                // We should clean only position which is not cleaned yet
                 if (!session.Cleaned.Contains(session.Position))
                 {
                     if (this.commandProcessor.Process(settings.Map, session, Command.C.AsRobotCommand()) == CommandResult.LowBattery)
@@ -29,80 +30,89 @@ namespace CleaningRobot.Services.Strategy
                     }
                 }
 
-                if (Command.A.AsRobotCommand() is MovementCommand advanceCommand)
+                var advanceCommand = (MovementCommand)Command.A.AsRobotCommand();
+
+                // We should advance only to position which is unvisited
+                if (IsNextPositionUnvisited(session, advanceCommand))
                 {
-                    if (!session.Visited.Contains(advanceCommand.GetNextPosition(session.Position, session.Position.Facing)))
+                    var result = this.commandProcessor.Process(settings.Map, session, advanceCommand);
+                    if (result == CommandResult.Success)
                     {
-                        var result = this.commandProcessor.Process(settings.Map, session, advanceCommand);
-                        if (result == CommandResult.LowBattery)
+                        reverseCommands.Push(Command.B);
+                        continue;
+                    }
+                    else if (result == CommandResult.Obstacle)
+                    {
+                        // In case of obstacle we should try all directions around us
+                        result = ProcessObstacle(settings, session, reverseCommands, advanceCommand);
+                    }
+
+                    if (result == CommandResult.LowBattery)
+                    {
+                        return session;
+                    }
+                }
+                else
+                {
+                    // In case there is no available position around us we should go back
+                    Command reverseCommand;
+
+                    do
+                    {
+                        if (!reverseCommands.TryPop(out reverseCommand) || this.commandProcessor.Process(settings.Map, session, reverseCommand.AsRobotCommand()) == CommandResult.LowBattery)
                         {
                             return session;
                         }
-                        else if (result == CommandResult.Obstacle)
-                        {
-                            for (var i = 0; i < 3; i++)
-                            {
-                                if (this.commandProcessor.Process(settings.Map, session, Command.TL.AsRobotCommand()) == CommandResult.LowBattery)
-                                {
-                                    return session;
-                                }
-
-                                reverseCommands.Push(Command.TR);
-
-                                if (!session.Visited.Contains(advanceCommand.GetNextPosition(session.Position, session.Position.Facing)))
-                                {
-                                    result = this.commandProcessor.Process(settings.Map, session, advanceCommand);
-
-                                    if (result == CommandResult.LowBattery)
-                                    {
-                                        return session;
-                                    }
-                                    else if (result == CommandResult.Success)
-                                    {
-                                        reverseCommands.Push(Command.B);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            reverseCommands.Push(Command.B);
-                        }
                     }
-                    else
+                    while (reverseCommand != Command.B);
+
+                    if (this.commandProcessor.Process(settings.Map, session, Command.TL.AsRobotCommand()) == CommandResult.LowBattery)
                     {
-                        Command reverseCommand;
-
-                        do
-                        {
-                            if (!reverseCommands.TryPop(out reverseCommand) || this.commandProcessor.Process(settings.Map, session, reverseCommand.AsRobotCommand()) == CommandResult.LowBattery)
-                            {
-                                return session;
-                            }
-                        }
-                        while (reverseCommand != Command.B);
-
-                        if (this.commandProcessor.Process(settings.Map, session, Command.TL.AsRobotCommand()) == CommandResult.LowBattery)
-                        {
-                            return session;
-                        }
-
-                        reverseCommands.Push(Command.TR);
+                        return session;
                     }
+
+                    reverseCommands.Push(Command.TR);
                 }
             }
 
             return session;
         }
-    }
 
-    internal class BacktrackingCleaningSettings : ICleaningSettings
-    {
-        public required List<List<MapCell?>> Map { get; set; }
+        private static bool IsNextPositionUnvisited(CleaningSession session, MovementCommand advanceCommand)
+            => !session.Visited.Contains(advanceCommand.GetNextPosition(session.Position, session.Position.Facing));
 
-        public required PositionWithDirection Start { get; set; }
+        private CommandResult ProcessObstacle(BacktrackingCleaningSettings settings, CleaningSession session, Stack<Command> reverseCommands, MovementCommand advanceCommand)
+        {
+            CommandResult result = CommandResult.Success;
 
-        public required int Battery { get; set; }
+            for (var i = 0; i < 3; i++)
+            {
+                result = this.commandProcessor.Process(settings.Map, session, Command.TL.AsRobotCommand());
+                if (result == CommandResult.LowBattery)
+                {
+                    break;
+                }
+
+                reverseCommands.Push(Command.TR);
+
+                if (IsNextPositionUnvisited(session, advanceCommand))
+                {
+                    result = this.commandProcessor.Process(settings.Map, session, advanceCommand);
+                    if (result == CommandResult.Obstacle)
+                    {
+                        continue;
+                    }
+
+                    if (result == CommandResult.Success)
+                    {
+                        reverseCommands.Push(Command.B);
+                    }
+
+                    break;
+                }
+            }
+
+            return result;
+        }
     }
 }
